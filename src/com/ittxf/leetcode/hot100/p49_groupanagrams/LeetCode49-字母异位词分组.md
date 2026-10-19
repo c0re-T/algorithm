@@ -159,7 +159,7 @@ map.get(key).add(str);         // containsKey、put、get：同一个桶走了�
 
 ## 九、包结构的一处隐患（顺带实测）
 
-他现在是一题一个包（`leetcode1_twosum`、`leetcode49_groupanagrams`），两个文件里都写着 `class Solution`，
+他现在是一题一个包（`p1_twosum`、`p49_groupanagrams`），两个文件里都写着 `class Solution`，
 靠不同包名互不干扰 —— 这是"题解类"最常见的命名冲突解法。实测把两个 `class Solution` 放进同一个包：
 
 ```

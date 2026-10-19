@@ -1,4 +1,4 @@
-package com.ittxf.leetcode.hot100.leetcode1_twosum;
+package com.ittxf.leetcode.hot100.p1_twosum;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.ittxf.leetcode.hot100.leetcode49_groupanagrams;
+package com.ittxf.leetcode.hot100.p49_groupanagrams;
 
 import java.util.*;
 
