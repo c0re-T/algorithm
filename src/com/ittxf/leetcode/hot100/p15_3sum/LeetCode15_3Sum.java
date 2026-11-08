@@ -1,10 +1,10 @@
-package com.ittxf.leetcode.hot100.p49_3sum;
+package com.ittxf.leetcode.hot100.p15_3sum;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LeetCode49_3Sum {
+public class LeetCode15_3Sum {
     public static void main(String[] args) {
         int[] nums = new int[]{-1, 0, 1, 2, -1, -4};
         System.out.println(new Solution().threeSum(nums));

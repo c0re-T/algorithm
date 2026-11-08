@@ -1,8 +1,8 @@
 # 算法练习 · Java 手写实现与笔记
 
-五十一个程序（52 个 `.java`，其中 `p543` 目前只有空 `main`、没有实现，未收录），一个知识点一份可运行的 `.java` + 一份 `.md` 笔记。笔记里不抄定义，只讲三件事：**这段代码为什么这么写、下标/参数怎么动、写错一处会长成什么样**，所有数字都是在本机实跑出来的。
+六十七个程序（67 个 `.java`、66 份 `.md` 笔记 —— `kmp` 包里暴力匹配与 KMP 两份程序共用一篇），一个知识点一份可运行的 `.java` + 一份 `.md` 笔记。笔记里不抄定义，只讲三件事：**这段代码为什么这么写、下标/参数怎么动、写错一处会长成什么样**，所有数字都是在本机实跑出来的。
 
-`src/com/ittxf/study/` 是课程知识点（分治、查找、DP、贪心、字符串匹配、图、回溯），`src/com/ittxf/leetcode/` 是 LeetCode 题解 —— 其中 `hot100/` 下**一题一个包**，按技巧能归九组：双指针（11 / 42 / 15）、滑动窗口（3 / 76 / 239 / 438）、哈希表（1 / 49 / 128）、前缀和（560）、数组原地操作（41 / 189 / 238 / 53 / 56）、矩阵（48 / 54 / 73 / 240）、链表基础（141 / 160 / 206 / 234）、链表进阶（2 / 19 / 21 / 23 / 24 / 25 / 138 / 142 / 146 / 148）、二叉树（94 / 101 / 104 / 226）。包名 `com.ittxf`，笔记和程序放在同一个目录下。
+`src/com/ittxf/study/` 是课程知识点（分治、查找、DP、贪心、字符串匹配、图、回溯），`src/com/ittxf/leetcode/` 是 LeetCode 题解 —— 其中 `hot100/` 下**一题一个包**，按技巧能归十二组：双指针（11 / 42 / 15）、滑动窗口（3 / 76 / 239 / 438）、哈希表（1 / 49 / 128）、前缀和（560）、数组原地操作（41 / 189 / 238 / 283 / 53 / 56）、矩阵（48 / 54 / 73 / 240）、链表基础（141 / 160 / 206 / 234）、链表进阶（2 / 19 / 21 / 23 / 24 / 25 / 138 / 142 / 146 / 148）、二叉树基础（94 / 101 / 104 / 226）、二叉搜索树（98 / 108 / 230）、二叉树进阶（102 / 105 / 114 / 124 / 199 / 236 / 437 / 543）、网格 DFS（200）。`src/com/ittxf/others/` 是四份不成套的练习（爬楼梯变种、全排列、和为正的最长子数组、同花顺判定）。包名 `com.ittxf`，笔记和程序放在同一个目录下。
 
 ## 思路图
 
@@ -32,11 +32,18 @@ flowchart LR
     A --> K["链表 / 二叉树<br/>每轮只重连常数条指针<br/>或把规模对半砍"]
     K -->|"p23: 2000×500 顺序 22,616 ms vs 分治 199 ms"| N2["同一批节点<br/>合并顺序决定 O(k²n) 还是 O(n log k)"]
     K -->|"p148: 100 万节点 195 ms"| L
+    A --> T["二叉树后序<br/>返回单边给父亲<br/>全局变量记双边答案"]
+    T -->|"p543 / p124：满树 100 万节点 2 ms"| L
+    T -->|"p200：全 1 方阵边长 110 就爆栈"| SO["栈深度 = 最长那条路径<br/>不是 log n，也不只看 n"]
+    A --> U["BFS 层序<br/>先冻结 levelSize<br/>再剥一层"]
+    U -->|"p102 / p199：斜链 20 万节点 3 ms"| SO2["队列长度 = 最宽一层<br/>怕宽不怕深，正好和递归相反"]
+    J -->|"p437 把前缀和搬上树<br/>离开节点时必须撤掉自己"| T
     B -.->|"递归树里没有重复子问题<br/>记忆化救不了它"| F
     F -.->|"同一层 dp[i-1][*] 被下游反复需要"| C
     C -.->|"left / right 向中间收缩"| D
     G -.->|"同样是递归，但要靠排序剪枝"| B
     H -.->|"key 的相等性就是分组规则"| F
+    T -.->|"p104 求深度 / p543 求直径<br/>只差一行 maxDiameter 更新"| U
 ```
 
 第二张图是全仓库那条主线：**写漏半句、忘了复位、两句顺序颠倒，后果通常不是报错，而是安静地给一个像模像样的错答案。**
@@ -66,6 +73,16 @@ flowchart TD
     E --> F20["p25：k ≤ 0 没挡"]
     E --> F21["p19：n = 0 / n 超长没挡"]
     E --> F22["p23：逐个累加合并"]
+    E --> F23["p102：levelSize 改成实时 queue.size()"]
+    E --> F24["p437：删掉第 5 步回溯"]
+    E --> F25["p124 / p543：全局字段从不复位"]
+    E --> F26["p200：淹没式 DFS 直接改入参"]
+    E --> F27["p200：递归深度 = 最长陆地路径"]
+    E --> F28["permute：res 是实例字段不清空"]
+    E --> F29["最长正和子数组：每步扫全表"]
+    E --> F30["p146 手写版：capacity = 0"]
+    E --> F31["p98：只比父子，不传上下界"]
+    E --> F32["p236：不检查 p / q 在不在树里"]
     F1 -->|"n = 0"| G1["钻约 19,988 层后 StackOverflowError"]
     F2 -->|"单点窗口 / 不存在的值"| G2["10 个目标丢 4 个；另有一种直接死循环"]
     F3 -->|"99 + 1"| G3["答案是 00，最高位整个丢掉"]
@@ -88,6 +105,16 @@ flowchart TD
     F20 -->|"n = 5, k = 0"| G20["不报错：返回 dummy 自环，5 个节点全丢"]
     F21 -->|"n = 0"| G21["second 停在尾节点 → NullPointerException"]
     F22 -->|"2000 列 × 500 个"| G22["22,616 ms（同一批节点两两分治 199 ms）"]
+    F23 -->|"main 那棵树"| G23["不死循环，但分成 [[3,9,20],[15],[7]]"]
+    F24 -->|"(1,4,5) 求 target=1"| G24["右子树命中左子树留下的前缀和：真值 1 给 2，随机错 49.0%"]
+    F25 -->|"大树之后调一棵小树"| G25["p124 单节点 5 仍返回 42；p543 两节点树仍返回 3"]
+    F26 -->|"同一份地图连调两次"| G26["第一次 1，第二次 0：'1' 全被抹成 '0'"]
+    F27 -->|"全 1 方阵逐档试探"| G27["边长 110（1.2 万格）就 StackOverflowError，题面 300×300 也在范围内"]
+    F28 -->|"同一实例连调三次"| G28["6 → 12 → 14 组，第三批还带着第一批的行"]
+    F29 -->|"全 1 数组 n=16,000"| G29["227 ms，比 O(n²) 暴力 62 ms 还慢（随机数据只有 180 个 key，看着像线性）"]
+    F30 -->|"空表时淘汰取到哨兵 head"| G30["NullPointerException: head.prev is null（旧 LinkedHashMap 版给 -1）"]
+    F31 -->|"先造合法 BST 再改一个值"| G31["16,368 个非法实例漏掉 1,238 个（7.6%），而随机树只暴露 0.23%"]
+    F32 -->|"p 在树里、q 是幽灵节点"| G32["把 p 当成 LCA 返回（参考实现给 null）"]
 ```
 
 ## 四份图程序用的其实是两张图
@@ -118,7 +145,7 @@ flowchart TD
 | 哈希表 | `p49_groupanagrams/LeetCode49_GroupAnagrams.java` | [LeetCode49-字母异位词分组.md](src/com/ittxf/leetcode/hot100/p49_groupanagrams/LeetCode49-字母异位词分组.md) | 全部逻辑压在"key 按内容相等"上，所以 `new String(chars)` 不能省 —— **实测拿 `char[]` 当 key 会把 6 个词分成 6 组（应 3 组）**，因为数组的 `hashCode`/`equals` 都按引用；输出的组顺序由容器决定（`HashMap` / `LinkedHashMap` / `TreeMap` 实测三种顺序、内容同一套，`TreeMap` 那版能对上 key 的字典序 `abt<aet<ant`）；与"按字母计数"的独立实现对拍 5,000 组 **0 差异**；排序 key vs 26 槽计数 key **看词长定胜负**：短词排序赢（59 vs 133ms）、2000 字符时计数碾压（97 vs 1,031ms），而**把槽扩到 128 反而比排序还慢**（137 vs ~100ms）；`computeIfAbsent` 实测比 `containsKey+put+get` 快 1.4 倍（41→29ms / 20 万词）；含空串时打印成 `[[, ], [a]]` 容易误读；注释那份用了 JDK 21 的 `List.reversed()`，实测 `--release 17` **编译不过** |
 | 双指针 | `p11_containerwithmostwater/LeetCode11_ContainerWithMostWater.java` | [LeetCode11-盛最多水的容器.md](src/com/ittxf/leetcode/hot100/p11_containerwithmostwater/LeetCode11-盛最多水的容器.md) | `min(两柱高) × 宽度`，宽度是 `right - left` 不是柱高；**只能动较矮的一边**——动较高的那边等于把"高度不可能更高、宽度还变小"的一族候选留下当答案，实测反过来写 **20,000 组随机里错 12,980 组（64.90%）**，最短反例只要 3 个数：`[1,1,0]` 正确 1、反过来写得 0；他的示例（9 根柱子）逐轮打点核对，第 2 轮就取到 49 之后全是徒劳；20,000 组与暴力 **0 差异**；n=16,000 实测双指针 0 ms vs 暴力 63 ms；这份没有 null 判断（`p42`、`p3` 有），传 null 直接 NPE |
 | 双指针 | `p42_trappingtainwater/LeetCode42_TrappingRainWater.java` | [LeetCode42-接雨水.md](src/com/ittxf/leetcode/hot100/p42_trappingtainwater/LeetCode42-接雨水.md) | 每格的水 = `min(左最高, 右最高) - height[i]`，难点是"没扫到的那一侧"；`leftMax < rightMax` 就是在担保**右边已经有一根不比 leftMax 矮的柱子**，所以左格可以立刻结算 —— 每轮恰好有一侧定案，故 `O(n)` 时间 `O(1)` 空间；真实逐轮打点（11 轮、贡献 `下标2=1、4=1、5=2、6=1、9=1`，合计 6）**结算顺序不是从左到右**：下标 11/10/9/8 先被右支结掉；20,000 组与逐列暴力 **0 差异**，把 `<` 换成 `<=` 也 0 差异；`[5,1,5]`→4、`[2,0,2]`→2、长度 ≤2 直接 0、null 也挡了 |
-| 双指针+去重 | `p49_3sum/LeetCode49_3Sum.java` | [LeetCode15-三数之和.md](src/com/ittxf/leetcode/hot100/p49_3sum/LeetCode15-三数之和.md) | 排序是"内层双指针方向唯一"和"三处跳重"的共同前提，`nums[i] > 0` 就 `break` 只在 target=0 时成立；20,000 组与"暴力+按值去重"**0 差异**；**三处跳重各自管什么，是逐个删掉测出来的**：删外层 `continue` → 40.88% 的随机实例条数变多、他的示例也从 2 组变 3 组；删内层两个 `while` → 18.84% 变多但**他的示例完全测不出来**（`[-2,0,0,2,2]` 才会重复）；删命中后的 `left++; right--` → **指针原地不动，直接死循环**（不是给错答案）；注释那份三重循环在他的示例上多给 1 组（3 vs 2），随机数据 61.25% 组数对不上；方法里 `Arrays.sort(nums)` 把入参排序了 + 多打一行；n=300 实测 0 ms vs 三重循环 22 ms；**题号写成了 49**（三数之和是第 15 题，与同层 `p49_groupanagrams` 撞号） |
+| 双指针+去重 | `p15_3sum/LeetCode15_3Sum.java` | [LeetCode15-三数之和.md](src/com/ittxf/leetcode/hot100/p15_3sum/LeetCode15-三数之和.md) | 排序是"内层双指针方向唯一"和"三处跳重"的共同前提，`nums[i] > 0` 就 `break` 只在 target=0 时成立；20,000 组与"暴力+按值去重"**0 差异**；**三处跳重各自管什么，是逐个删掉测出来的**：删外层 `continue` → 40.88% 的随机实例条数变多、他的示例也从 2 组变 3 组；删内层两个 `while` → 18.84% 变多但**他的示例完全测不出来**（`[-2,0,0,2,2]` 才会重复）；删命中后的 `left++; right--` → **指针原地不动，直接死循环**（不是给错答案）；注释那份三重循环在他的示例上多给 1 组（3 vs 2），随机数据 61.25% 组数对不上；方法里 `Arrays.sort(nums)` 把入参排序了 + 多打一行；n=300 实测 0 ms vs 三重循环 22 ms；目录/类名/笔记已统一改成 15 题（原先误写成 49，与 `p49_groupanagrams` 撞号） |
 | 原地划分 | `p283_movezeroes/LeetCode283_MoveZeroes.java` | [LeetCode283-移动零.md](src/com/ittxf/leetcode/hot100/p283_movezeroes/LeetCode283-移动零.md) | 两段式（非零前移 + 尾部补零）能原地的全部理由是一条不变量 **`index <= i` 恒成立**，写目标永远不越过读目标（20,000 组与"另开数组"的稳定划分参考 **0 差异**）；`nums[index] = nums[i]` 在没有零的数组上是纯粹的自写自（`[1,2,3,4]` 实测 4 次），存在但无害；与交换写法结果逐组一致而**写次数更少**（20,000 组里交换更多 14,663 次、相等 5,337 次、覆盖更多的情况 0 次）；注释那份额外数组版里 `Arrays.fill` 是多余的（`new int[n]` 本就全 0），也不合题面"原地"要求；这份没挡 null |
 | 滑动窗口 | `p3_.../LeetCode3_LongestSubstringWithoutRepeatingCharacters.java` | [LeetCode3-无重复字符的最长子串.md](src/com/ittxf/leetcode/hot100/p3_longestsubstringwithoutrepeatingcharacters/LeetCode3-无重复字符的最长子串.md) | `main` 用 `"1R1T7"` → 4；**`left = Math.max(left, map.get(c) + 1)` 里那个 max 是"left 只许前进"的守门人**：直接赋值时 `"abba"` 得 3（真值 2），50,000 组随机 **错 27,081 次（54.16%）**，而且它同时是 O(n) 复杂度论证的前提（指针一旦能后退就不是线性了）；注释说 value 存的是"索引 + 1"，代码存的其实是 `right`、`+1` 写在取值处 —— 照着注释改会造成"双重 +1"，实测 200,000 组**错 101,958 次**，最短反例 `"aab"`（2 → 1），而 `"abcabc"`、`"abba"` 在这种错法下仍然对；用 `Map` 而不是定长数组，才让大写 `R`/`T` 照跑（对比 438 越界） |
 | 滑动窗口 | `p239_slidingwindowmaximum/LeetCode239_SlidingWindowMaximum.java` | [LeetCode239-滑动窗口最大值.md](src/com/ittxf/leetcode/hot100/p239_slidingwindowmaximum/LeetCode239-滑动窗口最大值.md) | 队列存**下标**而不是值（值会重复，判不出"滑出窗口"）；四步顺序：扔过期 → 扔被压 → 进队 → 记录；逐轮打点看他的 `[1,3,-1,-3,5,3,6,7]`：`i=6` 时下标 4 是被新值**压掉**的而不是过期扔掉的 —— 真正在瘦身的是第二步；20,000 组随机对拍 0 差异，**队尾 `<` 还是 `<=`、队头 `if` 还是 `while` 都不影响正确性**（注释里"一定要用 `<=`"不准确，它只让队列平均长度从 2.70 变 3.04）；`k=1`/`k=n`/空数组/`k=0` 都正常，但 **`k > n` 抛 `NegativeArraySizeException: -1`**（`new int[n-k+1]`），开头的 `n == 0 \|\| k == 0` 挡不住；注释那份 `O(nk)` 在 n=32万/k=1600 上实测 216 ms vs 6 ms |
@@ -147,12 +174,24 @@ flowchart TD
 | 链表 | `p25_reversenodesinkgroup/LeetCode25_ReverseNodesInkGroup.java` | [LeetCode25-K个一组翻转链表.md](src/com/ittxf/leetcode/hot100/p25_reversenodesinkgroup/LeetCode25-K个一组翻转链表.md) | 先用 `kth` 走 k 步判断这一组够不够，不够就停；反转时 **`prev` 从 `groupNext` 起**（不是 null），尾巴自动接下一组，`groupPrev` 前进到 `groupStart`；k=2/3/5/6 实测；20,000 组（k≥1）0 差异、10/10 复用、10 万 0.3 ms；**k≤0 不报错但把链全改成自环并返回 dummy，5 个节点全丢** |
 | 链表 | `p138_copylistwithrandompointer/LeetCode138_CopyListWithRandomPointer.java` | [LeetCode138-复制带随机指针的链表.md](src/com/ittxf/leetcode/hot100/p138_copylistwithrandompointer/LeetCode138-复制带随机指针的链表.md) | 两趟 + `HashMap[旧节点→新节点]`：第一趟只 new，第二趟用 `map.get(cur.next)` / `map.get(cur.random)` 接指针；`map.get(null)` 返回 null，所以尾节点和 null random 不用特判；深拷贝按“节点身份 + random 指向”验；5,000 组 0 差异；10 万节点 12.2 ms；O(n) 表 |
 | 链表 | `p142_linkedlistcycleII/LeetCode142_LinkedListCycleII.java` | [LeetCode142-环形链表II.md](src/com/ittxf/leetcode/hot100/p142_linkedlistcycleII/LeetCode142-环形链表II.md) | 相遇后 `ptr` 回表头、与 `slow` 同速走，碰头处即入口；推导 `2(a+b)=a+2b+c → a=c`；11 种形状实测 **ptr 步数 = 入口下标**（0..99）；20,000 组 vs HashSet 0 差异；100 万节点 2.9 ms；**main 的案例 2/3 注释与 pos 参数对不上（代码对、标签错）** |
-| 缓存 | `p146_lrucache/LeetCode146_LRUCache.java` | [LeetCode146-LRU缓存.md](src/com/ittxf/leetcode/hot100/p146_lrucache/LeetCode146-LRU缓存.md) | `LinkedHashMap(cap, 0.75f, true)` + `removeEldestEntry(size()>cap)`；`getOrDefault` 被 JDK 重写，**实测也会刷新访问顺序**（`[2,3,1]` → `[3,1,2]`）；覆盖已有 key 同样刷新；容量 0 立即淘汰；100 万次 get 16.6 ms；**main 是空的、运行输出 0 字节**；非线程安全 |
+| 缓存 | `p146_lrucache/LeetCode146_LRUCache.java` | [LeetCode146-LRU缓存.md](src/com/ittxf/leetcode/hot100/p146_lrucache/LeetCode146-LRU缓存.md) | **已从 `LinkedHashMap` 三行版重写成 HashMap + 哨兵双向链表**：`Node` 必须存 `key`（淘汰时要 `map.remove(tailNode.key)`），`head`/`tail` 哨兵让摘挂不用判 null，`addNode` 四句先接新节点再改邻居；`get` 和 `put` 覆盖都要 `moveToHead`，淘汰判断放在 `else` 分支里（覆盖不挤人）；`main` 跑官方序列实测 `1 / -1 / -1 / 3 / 4`；3,000 条随机序列共 **180,000 次操作**与 `LinkedHashMap` 版和手工 LRU 模型**都 0 差异**；`key=-1` 与哨兵同值但安全（哨兵不在 map 里）；**`capacity=0` 执行 put 会 NPE**（空表淘汰取到哨兵 head，`head.prev` 是 null），旧 `LinkedHashMap` 版同输入给 −1；200 万次混合操作手写 64 ms vs `LinkedHashMap` 61 ms（打平），`javap` 实测 `Node` 没有 `this$0` 字段；非线程安全 |
 | 链表 | `p148_sortlist/LeetCode148_SortList.java` | [LeetCode148-排序链表.md](src/com/ittxf/leetcode/hot100/p148_sortlist/LeetCode148-排序链表.md) | 自顶向下归并：`fast=head.next` 让 `slow` 停在左半段尾，`slow.next=null` 断开，递归后用 21 题 `merge`；100 万节点 **195/215 ms** vs 注释版“转 List 再 sort”294/307 ms；20,000 组 0 差异、4/4 复用；深度只有 ~20；**注释版 `a.val-b.val` 比较器溢出**（20 万+极值实测 `IllegalArgumentException`） |
 | 二叉树 | `p94_binarytreeinordertraversal/LeetCode94_BinaryTreeInorderTraversal.java` | [LeetCode94-二叉树的中序遍历.md](src/com/ittxf/leetcode/hot100/p94_binarytreeinordertraversal/LeetCode94-二叉树的中序遍历.md) | 中序递归本身正确，**但 `List` 是实例字段**：同一 `Solution` 连续调用共用一个 List 且返回同一对象，main 第三次打印出 10 个值（`[1,3,2,4,2,5,1,6,3,7]`）；每次 new 实例则 `[4,2,5,1,6,3,7]`；深链 5,000 层安全、10,000 层冷启动爆栈、JIT 预热后同深度又能过 |
 | 二叉树 | `p101_symmetrictree/LeetCode101_SymmetricTree.java` | [LeetCode101-对称二叉树.md](src/com/ittxf/leetcode/hot100/p101_symmetrictree/LeetCode101-对称二叉树.md) | 镜像递归：`check(p.left,q.right) && check(p.right,q.left)`；**“完全二叉树肯定对称”是错的** —— `[1,2,3,4,5,6,7]` 实测 false（镜像是 2 对 3），`[1,2,2,3,4,4,3]` 才 true；结构相同 ≠ 值镜像；20,000 组 0 差异；20,000 层可跑、50,000 层爆栈 |
 | 二叉树 | `p104_maximumdepthofbinarytree/LeetCode104_MaximumDepthOfBinaryTree.java` | [LeetCode104-二叉树的最大深度.md](src/com/ittxf/leetcode/hot100/p104_maximumdepthofbinarytree/LeetCode104-二叉树的最大深度.md) | `max(左,右)+1`，空树 0；叶子那行 `return 1` 可删（会走 `max(0,0)+1`）；20,000 组与 BFS 0 差异；**栈深度等于树高**：100 万节点满树（高 20）2.2 ms，5 万节点斜链爆栈 |
 | 二叉树 | `p226_invertbinarytree/LeetCode226_InvertBinaryTree.java` | [LeetCode226-翻转二叉树.md](src/com/ittxf/leetcode/hot100/p226_invertbinarytree/LeetCode226-翻转二叉树.md) | 后序翻转、返回同一个根（原地、不 new）；连翻两次必还原；20,000 组（带 null 的序列化比对）0 差异；100 万节点满树 3.6 ms；10,000 层可跑、20,000 层爆栈；**main 直接 println 树对象，输出 `TreeNode@hash`，看不到结构** |
+| 二叉树 | `p102_binarytreelevelordertraversal/LeetCode102_BinaryTreeLevelOrderTraversal.java` | [LeetCode102-二叉树的层序遍历.md](src/com/ittxf/leetcode/hot100/p102_binarytreelevelordertraversal/LeetCode102-二叉树的层序遍历.md) | `int levelSize = queue.size()` 是**快照**，for 里塞进去的孩子不会改变它，所以一轮恰好剥一层；**改成实时 `i < queue.size()` 不死循环**（我原本以为会），但把 9、20 算进第一层：`[[3,9,20],[15],[7]]`；20,000 组与"DFS 带 depth 分桶"0 差异；换 `ArrayDeque` 输出逐组一致；**队列峰值 = 最宽一层**（满树高 16 时 32,768），所以右斜链 10 万 / 20 万节点只要 1 / 3 ms，而同形状的 DFS 参考直接爆栈 |
+| 二叉树 | `p199_binarytreerightsideview/LeetCode199_BinaryTreeRightSideView.java` | [LeetCode199-二叉树的右视图.md](src/com/ittxf/leetcode/hot100/p199_binarytreerightsideview/LeetCode199-二叉树的右视图.md) | 层序骨架 + 一行 `if (i == levelSize - 1)`；**右视图不是"一路向右"**：main 那棵树给 `[1,3,4,5]`（第 3、4 层右边全空），纯左斜链给 `[1,2,3]`；20,000 组与"每层取最后"和"DFS 先右后左"两种参考都 0 差异；**先右后左入队、或改成 `i == 0`，都错 19,127/20,000**（同一个错误的两种写法，都变成左视图），示例树上只有 `i==0` 测得出（给 `[1,2,5]`）；斜链 10 万节点 BFS 正常、DFS 爆栈 |
+| 二叉树 | `p543_diameterofbinarytree/LeetCode543_DiameterOfBinaryTree.java` | [LeetCode543-二叉树的直径.md](src/com/ittxf/leetcode/hot100/p543_diameterofbinarytree/LeetCode543-二叉树的直径.md) | 和 104 题只差一行 `maxDiameter = max(maxDiameter, 左深+右深)`；**深度返回节点数、左+右恰好是边数，不要再 ±1**：更新式多加 `+1` → main 树给 4、20,000 组全错，`return` 漏掉 `+1` → 全部给 0；**只看根的左+右**在 main 树上恰好对，随机数据错 1,022/20,000（5.1%）；20,000 组与"无向图两次 BFS 求直径"0 差异；**`maxDiameter` 是实例字段不复位**：大树之后调两节点树仍给 3（真值 1）、调单节点仍给 3（真值 0）；满树 100 万节点 2 ms、直径 38，斜链 5 万爆栈 |
+| 二叉树 | `p124_binarytreemaximumpathsum/LeetCode124_BinaryTreeMaximumPathSum.java` | [LeetCode124-二叉树中的最大路径和.md](src/com/ittxf/leetcode/hot100/p124_binarytreemaximumpathsum/LeetCode124-二叉树中的最大路径和.md) | **一个函数干两件事**：`priceNewPath = 我+左+右`（拐点，就地更新 `maxSum`）、`return 我+max(左,右)`（报价，只能一边否则分叉）；20,000 组与"枚举所有简单路径"0 差异；三个变体分别错 **6,529 / 1,637 / 3,282** 组（去钳位 / 初值 0 / 报价用拐点和），而 **main 那棵树一个都测不出来**；给 return 也套 `max(0,…)` 实测 0/20,000（两层钳位重合，无害）；**`null` 返回 −2147483648**（初值原样吐出）；**`maxSum` 不复位**：42 之后调单节点 5 仍给 42（连调同一棵树测不出来）；满树 100 万节点 2 ms，斜链 5 万爆栈 |
+| 二叉树 | `p105_constructbinarytreefrompreorderandinordertraversal/LeetCode105_...Traversal.java` | [LeetCode105-从前序与中序遍历序列构造二叉树.md](src/com/ittxf/leetcode/hot100/p105_constructbinarytreefrompreorderandinordertraversal/LeetCode105-从前序与中序遍历序列构造二叉树.md) | `leftSize = rootIndex - inLeft` 是唯一的桥梁：**由中序算出、用来切前序**；20,000 组还原后与原树同形 0 差异；**indexMap 只在左斜树上显形**（n=4,000：1 ms vs 每层线性扫 7 ms），右斜树上根永远在 `inLeft`、平衡树上总量只有 O(n log n)，两种写法都测不出差别；`indexMap`/`preorder` 是实例字段**从不 clear**（连调两次 map 从 3 个 key 变 5 个）；重复值 `{1,1}` → AIOOBE、前序值不在中序里 → 拆箱 NPE、两数组长度不一致 → 静默建出 `()1(()2())`；斜链 1 万爆栈（帧比 104 大，门槛更低），平衡树 2 万只要 2 ms |
+| 二叉树 | `p114_flattenbinarytreetolinkedlist/LeetCode117_FlattenBinaryTreeToLinkedList.java` | [LeetCode114-二叉树展开为链表.md](src/com/ittxf/leetcode/hot100/p114_flattenbinarytreetolinkedlist/LeetCode114-二叉树展开为链表.md) | 找左子树最右节点（前序前驱）→ 原右子树挂上去 → 左子树挪到右边 → 左指针清空；**第 2、3 步顺序颠倒会整棵丢掉原右子树**；删掉 `curr.left = null` 后值序列仍全对但左指针残留；20,000 组与前序遍历 0 差异、0 棵残留左孩子；null 安全、幂等；**内层 while 实测约 1.8n 步**（n=1,000→1,799；n=10,000→17,999），纯右链 0 步，迭代原地 O(1) 空间不爆栈；注释那份前序数组版是对的但要 O(n) 列表且深链爆栈；**类名/文件名写的是 117，题目其实是 114**，两个 import 是给注释版留的 |
+| 二叉树 | `p236_lowestcommonancestorofabinarytree/LeetCode236_...BinaryTree.java` | [LeetCode236-二叉树的最近公共祖先.md](src/com/ittxf/leetcode/hot100/p236_lowestcommonancestorofabinarytree/LeetCode236-二叉树的最近公共祖先.md) | 三行返回：**左右都非空 → 我就是拐点**，只有一边非空 → 往上传那一边；`root == p \|\| root == q` 提前返回处理"p 是 q 的祖先"（随机数据里占 17.4%，3,487/20,000）；20,000 组与父指针上跳参考 0 差异；**不检查存在性**：p 在树里、q 是幽灵节点时把 p 当答案返回（参考给 null）；比较用引用 `==`；满树 100 万节点 34 ms（比 p124 慢一个量级），斜链 5 万爆栈 —— **测深度要把 p、q 放在链尾**，否则第一层就短路返回了 |
+| 二叉树 | `p437_pathsumIII/LeetCode437_PathSumIII.java` | [LeetCode437-路径总和III.md](src/com/ittxf/leetcode/hot100/p437_pathsumIII/LeetCode437-路径总和III.md) | 把 560 的前缀和搬上树，"前缀"= 根到当前节点这条路径；**第 5 步回溯是命门**：删掉它右子树会命中左子树留下的前缀和，20,000 组错 **9,798（49.0%）**，最小反例 `(1,4,5)` 求 1 → 给 2；不预置 `put(0L,1)` 错 7,115 组（`(1,2)` 求 1 → 给 0）；回溯写 `put(count-1)` 留下 7 个计数 0 的 key，**不影响正确性**；**map 是局部变量**，连调三次 3,3,1 不泄漏（与 94/124/543 相反）；20,000 组与注释里的暴力 0 差异；long 是防御性的（三个 2^30 求 −2^30：long 给 0、int 给 1，题面值域下 int 也够）；满树 100 万节点 12 ms vs 暴力 29 ms —— **满树上暴力是 O(n·h) 不是 O(n²)**，只差 2 倍多 |
+| 二叉搜索树 | `p98_validatebinarysearchtree/LeetCode98_ValidateBinarySearchTree.java` | [LeetCode98-验证二叉搜索树.md](src/com/ittxf/leetcode/hot100/p98_validatebinarysearchtree/LeetCode98-验证二叉搜索树.md) | 往左收紧 `upper = 父亲值`、往右收紧 `lower = 父亲值`，祖先约束一路带到底；**只比父子会被隔代违规骗过**：`(5,4,6,null,null,3,7)` 他的 false、朴素版 true，定向实验 16,368 个非法实例漏掉 **1,238（7.6%）**，而 20,000 组随机树只暴露 45 次（0.23%）—— **随机对拍测不出这个 bug**；边界用 `long`，否则单节点 `MIN_VALUE`/`MAX_VALUE` 被误判 false；`<=`/`>=` 是严格判定，重复值 false；20,000 组与"中序严格递增"0 差异；**合法斜链 2 万通过、3 万爆栈，而全 0 的非法斜链 100 万节点反而 0 ms**（第二个节点就 return false，`&&` 短路）—— 测栈深度必须用能走到底的输入 |
+| 二叉搜索树 | `p108_convertsortedarraytobinarysearchtree/LeetCode108_...SearchTreeNode.java` | [LeetCode108-将有序数组转换为二叉搜索树.md](src/com/ittxf/leetcode/hot100/p108_convertsortedarraytobinarysearchtree/LeetCode108-将有序数组转换为二叉搜索树.md) | 中点当根、两边递归，有序白送 BST 性质、两边最多差 1 个节点所以高度 `⌈log₂(n+1)⌉`；`(left+right)/2` **向下取整**：`{1,2}` 的根是 1，改成 +1 取整根变 2，两个都合法；20,000 组：中序还原 0 差异、不平衡 0 次，"不是严格 BST" 19,004 次**全部由输入重复值造成**；**不检查有序性**：传乱序数组会建出形状平衡但不是 BST 的树；空数组/null 都返回 null；100 万元素 6 ms、树高 20 —— **深度由算法保证，不可能斜链爆栈**；main 打印 `TreeNode@hash`，验证不了任何东西 |
+| 二叉搜索树 | `p230_kthsmallestelementinaBST/LeetCode230_KthSmallestElementInaBST.java` | [LeetCode230-二叉搜索树中第K小的元素.md](src/com/ittxf/leetcode/hot100/p230_kthsmallestelementinaBST/LeetCode230-二叉搜索树中第K小的元素.md) | BST 中序升序 → `res.get(k-1)`，思路对但**整棵树走完，没有提前停**：n=100 万、k=1 时访问 **1,000,000 个节点 / 12 ms**，提前停版只访问 **19 个 / 0 ms**；k=n 时两者相同，**耗时与 k 无关**；空间 O(n)（列表装下全部值）而不是 O(h)；20,000 组与"排序后取第 k 个"0 差异；**不检查输入是不是 BST**（非 BST 上返回的是中序第 k 个）；k=0 / k>n / k=−1 / 空树全是 `IndexOutOfBounds`，**不会静默给错值**；斜链 5 万爆栈，平衡树 100 万正常 |
+| 网格 DFS | `p200_numberofislands/LeetCode200_NumberOfIslands.java` | [LeetCode200-岛屿数量.md](src/com/ittxf/leetcode/hot100/p200_numberofislands/LeetCode200-岛屿数量.md) | `count++` 只在踩到新陆地时发生，`dfs` 负责把整座岛抹成 `'0'`（这一行同时当 visited，**必须在四次递归之前**）；四连通不含对角线：`{{1,0},{0,1}}` → 2；20,000 组与并查集 0 差异；**入参被就地抹平**：同一份地图连调两次给 1 然后 0；锯齿矩阵 AIOOBE（内层统一用 `grid[0].length`）；null / 0 行 / 0 列 / 全 0 都给 0；**递归深度 = 最长陆地路径**：全 1 方阵逐档试探，**边长 110（1.2 万格）就爆栈**，200/300/500/800 全爆而 BFS 参考都给 1 —— 题面 300×300 正落在会爆的区间里 |
 | 动态规划 | `KnapsackProblem.java` | [0-1背包动态规划.md](src/com/ittxf/study/dynamic/0-1背包动态规划.md) | 两个分支都回到 `i-1` 行才是"0-1"的来历；4,000 组随机实例实测 `dp` 值、反推方案总重量、总价值**三项全部 0 次失败**（含 481 组平局）；平局时 `>` 偏向"放"→ 报出的是下标较大的物品；重量 0 的物品实测把 1100 算成 1000；自顶向下写法 n=24 要 **84,064 次调用**，表格只需 1,275 格；一维滚动数组结果全同、省 2000 倍内存，**但没有 `path` 就反推不出方案** |
 | 贪婪算法 | `GreedyAlgorithm.java` | [贪婪算法电台覆盖.md](src/com/ittxf/study/greedy/贪婪算法电台覆盖.md) | 穷举 32 个子集确认最少 4 个且**可行解只有两种**；平局用严格 `<` → **同一份数据只换 HashMap 的构造方式实测得到两种答案**，被支配的 K4 会顶掉 K1；`else break` 是必需的；3,000 组随机集合覆盖实测**贪心 8.30% 的实例比最优多花电台** |
 | 字符串匹配 | `ViolenceMatch.java`、`KMPAlgorithm.java` | [暴力匹配与KMP.md](src/com/ittxf/study/kmp/暴力匹配与KMP.md) | **暴力那份的 `return i - j + 1` 是错的**：`main` 打印 3 而真实是 2，20 万组里 92,256 次命中**全部恰好 +1**，同一批数据上 `kmpSearch` 与 `indexOf` **全对**；比较次数实测：他自己那组几乎看不出差距（36 vs 32），换成 `A^n B` 就是暴力的 `\|pat\|²`（144）对线性（34），100 万字符实测 1,099 万 vs 200 万次；`kmpNext("")` 实测抛 AIOOBE |
@@ -161,14 +200,19 @@ flowchart TD
 | 最短路径 | `DijkstraAlgorithm.java` | [Dijkstra最短路径.md](src/com/ittxf/study/dijkstra/Dijkstra最短路径.md) | 从 G 出发 7 轮实测逐轮复盘，**49 次 `len` 计算里只有 7 次真的改到 `distance`**；与参考实现**逐起点对比，7 个起点全部一致**，且和 Floyd 在同一张图上 49 对全等；**`65535` 既是无穷大也是天花板**，实测 `40000+40000` 的路径被判成"不可达"（参考给 80000）；加一条有向负边 `E→A=-10` 实测给 A=2，而 Bellman-Ford 是 -14，且**贪心参考实现跟着一起错**；`updateArr()` 的 `index` 不复位在不连通时退回起点白跑几轮（数字侥幸没错，但孤立点的 `alreadyArr` 永远是 0）；`show()` 里写死了 `{'A'..'G'}`，8 顶点的图**算对了却打印崩** |
 | 最短路径 | `FloydAlgorithm.java` | [Floyd所有顶点最短路径.md](src/com/ittxf/study/floyd/Floyd所有顶点最短路径.md) | 实测 **343 次 `len` 计算（= 7³）、37 次更新**；`pre[i][j] = pre[k][j]` 的含义是"借 k→j 已算好的走法"，用它还原 **42 对路径实测全部合法且逐段加总等于 `distance`**；对角线必须填 0（换成 65535 后 A→A 变成 4，7 格变怪数）；**`this.distance = matrix` 不拷贝**，实测 `floyd()` 之后调用方那个数组从 `[0,5,7,N,N,N,2]` 变成 `[0,5,7,12,6,8,2]`（Prim/Kruskal 那两份都是逐格拷的）；INF 换成 `Integer.MAX_VALUE` 实测溢出成 -2，把两张不连通的块加成负数墙；V=800 时一次 Floyd 146ms、跑 800 次 Dijkstra 要 413ms |
 | 回溯 | `HorseChessboard.java` | [马踏棋盘.md](src/com/ittxf/study/horse/马踏棋盘.md) | 输出的 8×8 棋盘**逐格验过：1..64 各一次、相邻编号全是合法马步**；实测那层 Warnsdorff 排序把 8×8 从"15 秒搜不完（1.2 亿次调用、只填到 49 格）"压到 **47,156 次调用 / 几十毫秒**，6×6 是 122 万 → 1,523（约 800 倍），5×5 直接 25 次调用零回溯；代价是每层递归要跑 25 次 `next()`（共 118 万次）；**起点从 (0,0) 挪到 (0,1)，调用量从 47,156 掉到 71（664 倍）**；`finished` 是 static 且从不复位 → 同一 JVM 第二次跑只用 64 次调用就打出一张"59 出现两次"的假棋盘；`next()` 用列去比 `X`、用行去比 `Y`，`visited` 又写成 `row * X + column` → **只有正方棋盘能掩盖这处行列互换**，实测 4×6/6×4/2×8/3×4/4×5 全部几步之内 AIOOBE；12×12 以上实测 20 秒搜不完 |
+| 动态规划 | `others/climbstairs/ClimbStairs.java` | [爬楼梯1到4阶与坏台阶.md](src/com/ittxf/others/climbstairs/爬楼梯1到4阶与坏台阶.md) | 每步 1~4 阶、坏台阶置 0：`dp[i] = dp[i-1]+…+dp[i-4]`，每加一次取一次 `% 1_000_000_007`；`dp[0] = 1` 是"起点算一种走法"；main 的 n=10 坏 `{3,7}` → 81；20,000 组与记忆化 0 差异；**无坏台阶时不是 `2^(n-1)`**，f(1..7)=1,2,4,8,**15**,29,56，n=5 起就分叉；**坏台阶只挡落脚不挡跨过**（n=4 坏 `{2}` → 4 种：`4`/`1+3`/`3+1`/`1+2+1`）；**坏台阶过滤那行是数组边界唯一的守门人**：删掉后 n=5 坏 `{6}` 实测 AIOOBE `Index 6 length 6`；坏台阶含 1 且 n=1 → 0、含顶层 → 0、连续 4 个坏 → 0；重复/负数/超界的坏台阶值都被过滤掉（n=5 坏 `{0,-3,6,99}` → 15）；n=−1 → AIOOBE `Index 0 length 0`；中间值最大 2,000,000,012 < int 上限（先累加四项再取模就会溢出），n=100 万 13 ms |
+| 回溯 | `others/permute/Permute.java` | [全排列.md](src/com/ittxf/others/permute/全排列.md) | 用 `path.contains(nums[i])` 代替 `used[]`，思路能跑但**每层每分支都线性扫一遍 path**；5,000 组（1..6 个互不相同的值）与 `used[]` 版 0 差异、输出恰好字典序；**含重复元素时静默返回 0 行**（`{1,1,2}` 实测 0 行，`used[]` 版给 6 行）—— `contains` 按值判重，把"同一个值"当成"同一个位置"；`res` / `path` 是实例字段且 `res` 从不 `clear`：同一实例连调三次实测 6 → 12 → 14 行；空数组给 `[[]]`、null 给 NPE；n=8 实测 7 ms vs 1 ms、n=9 69 vs 13、n=10 709 vs 245 |
+| 前缀和 | `others/longestSubarraySumPositive/LongestSubarraySumPositive.java` | [和为正的最长子数组.md](src/com/ittxf/others/longestSubarraySumPositive/和为正的最长子数组.md) | "和为正"翻译成 `preSum[i] > preSum[j]`、要最长就要最小的 j，表里存"前缀和 → 第一次出现的下标"，`put(0,0)` 是空前缀、长度 `i - value` 不用 ±1；20,000 组与暴力、与 `O(n log n)` 排序版**双向 0 差异**；**严格 `>` 写成 `>=`** 实测错 5,823/20,000（29.1%），最短反例 `{0}` → 1（真值 0）；不判 `containsKey` 直接覆盖旧下标 → 错 10,262/20,000（51.3%，`{1,-1,1}` → 1，真值 3）；`put` 挪进遍历 `entrySet` 的循环里 → `ConcurrentModificationException`；**每步扫全表 → O(n × 不同前缀和个数)**：随机 ±3、n=5,000 只有 180 个 key 看着像线性，全 1 数组 n=2,000/4,000/8,000/16,000 实测 3/15/57/**227 ms**（翻倍就翻四倍），比暴力 62 ms 还慢，排序版 0 ms；`{1e9,1e9,1e9}` 前缀和 int 溢出 → 2（真值 3）；空/全负/全 0 给 0，null → NPE |
+| 模拟 | `others/straightFlush/StraightFlush.java` | [同花顺判定.md](src/com/ittxf/others/straightFlush/同花顺判定.md) | 先判同花、再排序判相邻差 1；**A 按 1 编码**，所以 `10-J-Q-K-A` 排成 `1,10,11,12,13` 要靠"五项全等"的特判捞回来，而 `A-2-3-4-5` 走差 1 自然通过、跨圈的 `Q-K-A-2-3` 判 false；**穷举 12,376 组输入（6,188 个点数多重集 × 同花/不同花）与独立参考 0 差异**，10 个点数集判真 × 4 花色 = 40 组真同花顺；**同花分支里 `Arrays.sort` 就地排了调用方的数组**（不同花分支提前 return，不排序）—— 副作用是条件性的；null / 4 张 / 6 张 → false，元素为 null → NPE；换成 A=14 编码实测把 `A-2-3-4-5` 判成 false（特判写死了 `rank == 1`）；100 万次判定 20 ms |
 
-## 一条从这五十一个程序里读出来的共性
+## 一条从这六十七个程序里读出来的共性
 
-写漏一处、忘复位一个变量、两句顺序颠倒 —— 三十九处里**十处会当场抛异常**（汉诺塔爆栈、KMP 空模式串、Kruskal 判环失效后越界、
-马踏棋盘非正方越界、Dijkstra 的 `show()` 遇到 8 个顶点、239 的 `k > n`、438 的一个大写字母、76 的空 `t`、189 的空数组、**19 的 `n` 越界**），
+写漏一处、忘复位一个变量、两句顺序颠倒 —— 六十三处里**十四处会当场抛异常**（汉诺塔爆栈、KMP 空模式串、Kruskal 判环失效后越界、
+马踏棋盘非正方越界、Dijkstra 的 `show()` 遇到 8 个顶点、239 的 `k > n`、438 的一个大写字母、76 的空 `t`、189 的空数组、19 的 `n` 越界、
+**200 的全 1 方阵边长 110**、**146 手写版的 `capacity = 0`**、**爬楼梯删掉坏台阶过滤**、**105 的前序/中序含重复值**），
 **两处直接编译不过**（分组注释版的 `List.reversed()` 在 `--release 17` 下、两个 `Solution` 放进同一个包），
 **两处变成死循环**（二分的 `mid±1` 少一格、三数之和去掉收尾的 `left++/right--`），
-剩下二十五处都是安静地给出一个格式完全正常的错答案 / 次优答案 / 被改坏的数据：
+剩下四十五处都是安静地给出一个格式完全正常的错答案 / 次优答案 / 被改坏的数据：
 
 | 漏写/混用/顺序颠倒的那一处 | 触发输入 | 实测后果 |
 | --- | --- | --- |
@@ -211,18 +255,42 @@ flowchart TD
 | 19 没有挡 `n` 的边界 | `n = 0`、`n > 长度`、空链 + `n = 0` | `NullPointerException`：second 停在尾节点（n=0）或 first 越界（n>长度） |
 | 25 没有挡 `k <= 0` | `n = 5, k = 0`（或 −1） | 不报错也不死循环：每个节点被改成自环，返回 dummy 自环，原 5 个节点全部丢失 |
 | 23 用"累加结果再并下一条" | k=2000、每列 500 个节点 | 结果正确但 22,616 ms；同一批节点两两分治 199 ms（114 倍） |
+| 200 用递归 DFS 淹岛 | 全 1 方阵，边长 110（1.2 万格） | `StackOverflowError`；200/300/500/800 全爆，而 BFS 参考都给 1 —— 题面 300×300 正落在会爆的区间 |
+| 146 手写版没挡 `capacity = 0` | `new LRUCache(0)` 之后 `put` | `NullPointerException: Cannot assign field "next" because "<parameter1>.prev" is null`（旧 `LinkedHashMap` 版给 −1） |
+| 爬楼梯删掉坏台阶的 `b >= 1 && b <= n` 过滤 | n=5、bad={6} | `ArrayIndexOutOfBoundsException: Index 6 out of bounds for length 6` |
+| 105 的前序/中序里有重复值 | `pre={1,1}`、`in={1,1}` | `ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2`；前序值不在中序里则是自动拆箱 NPE |
+| 102 的 `i < queue.size()` 实时读队长 | 任何超过两层的树 | 不死循环，但分层错乱：main 那棵树给 `[[3,9,20],[15],[7]]`（应 `[[3],[9,20],[15,7]]`） |
+| 199 入队改成先右后左 / 取 `i == 0` | 示例 `(1,2,3,null,5,null,4)` | 两种错法各错 19,127/20,000 组；`i == 0` 那版给 `[1,2,5]`（应 `[1,3,4]`） |
+| 543 的 `maxDiameter` 更新式多加 `+1` | 任何一棵树 | main 树给 4（真值 3），20,000 组全错；反过来 `return` 漏掉 `+1` 则全部给 0 |
+| 124 去掉 `max(0, 子树贡献)` 的钳位 | 含负值的树 | 错 6,529/20,000；改成返回"左+右+根"的分叉值再错 3,282 组 —— **main 那棵树两种错法都测不出来** |
+| 124 / 543 / 全排列的结果字段是实例字段且不复位 | 大树之后调一棵小树 | 124 单节点 5 仍返回 42、543 两节点树仍返回 3（真值 1）、全排列连调三次 6 → 12 → 14 行 |
+| 437 删掉回溯那行 `map.put(preSum, count - 1)` | 最小反例 `(1,4,5)` target 1 | 给 2（真值 1）；20,000 组错 9,798（49.0%） |
+| 437 删掉 `map.put(0L, 1)` | 最小反例 `(1,2)` target 1 | 给 0（真值 1）；20,000 组错 7,115 |
+| 98 只比父与子、不传上下界 | `(5,4,6,null,null,3,7)` | 给 true（真值 false）；16,368 组变异非法树漏掉 1,238 组（7.6%），而随机 20,000 组里只有 45 组（0.23%）能测出差别 |
+| 98 的上下界用 `int` 而不是 `long` | 单节点 `Integer.MIN_VALUE` / `MAX_VALUE` | 给 false（真值 true）：`val <= lower` 在端点上成立 |
+| 230 中序走完再取第 k 个 | n=100 万、k=1 | 答案对，但访问 **1,000,000 个节点 / 12 ms**；提前停版只访问 19 个 / 0 ms，耗时与 k 无关 |
+| 236 不检查 p / q 是否真在树里 | p 在、q 是幽灵节点 | 返回 6（一个"祖先"），参考实现给 null |
+| 200 的 `dfs` 把陆地就地抹成 `'0'` | 同一份地图连调两次 | 第一次 1、第二次 0：调用方的地图已经被抹平 |
+| 114 漏掉 `curr.left = null` | 任何一次展开 | 右链的值序列 20,000 组全对，但左指针残留，检查左孩子时全部不合格 |
+| 108 不检查输入是否有序 | 乱序数组 | 照样建出一棵"平衡"的树，但它不是 BST（中序还原出来就是原乱序数组） |
+| 105 不校验两个数组长度一致 | `pre={1,2,3}`、`in={1,2}` | 不报错，建出 `()1(()2())` 这样一棵少一个节点的怪树 |
+| 105 的 `indexMap` 是实例字段且从不 clear | 同一实例连调两次 | map 从 3 个 key 变 5 个，上一批的 key 一直留着（这次靠新 key 覆盖旧值侥幸没出错） |
+| 全排列用 `path.contains` 判重 | `{1,1,2}` | 静默返回 **0 行**（`used[]` 版给 6 行）：按值判重把"同一个值"当成了"同一个位置" |
+| 最长正和子数组把 `>` 写成 `>=` | `{0}` | 给 1（真值 0）；20,000 组错 5,823（29.1%） |
+| 最长正和子数组每步扫全表 | 全 1 数组 n=16,000 | 227 ms，比 `O(n²)` 暴力的 62 ms 还慢；`O(n log n)` 排序版 0 ms |
+| 同花顺在同花分支里 `Arrays.sort` | 任何一手同花牌 | 调用方的数组被就地排序；不同花分支提前 return 反而不动 —— **副作用是条件性的** |
 
-结论很一致：**"跑一个正常用例"能通过的密度太低**。上面每个坑都是靠专门去撞边界（不存在的值、单点窗口、空串、0 个盘、平局、孤立的顶点、恰好等于无穷大的权值、重量 0 的物品、非正方棋盘、**恰好带重复元素的数组**、含 0 的数组、`k` 比数组还长、一个大写字母、`int` 两端、单行/单列矩阵、空串 `t`、全负数组、同一个 JVM 跑第二遍、**同一个 Solution 实例第二次调用**、`k = 0`、`n = 0`）才暴露出来的。
+结论很一致：**"跑一个正常用例"能通过的密度太低**。上面每个坑都是靠专门去撞边界（不存在的值、单点窗口、空串、0 个盘、平局、孤立的顶点、恰好等于无穷大的权值、重量 0 的物品、非正方棋盘、**恰好带重复元素的数组**、含 0 的数组、`k` 比数组还长、一个大写字母、`int` 两端、单行/单列矩阵、空串 `t`、全负数组、同一个 JVM 跑第二遍、**同一个 Solution 实例第二次调用**、`k = 0`、`n = 0`、**大树之后紧接着调一棵小树**、**不在树里的幽灵节点**、**含重复值的前序/中序**、**长度对不上的两个数组**、**乱序数组拿去建 BST**、**带重复元素的全排列**、`capacity = 0`、**边长 110 的全 1 方阵**、**超出 n 的坏台阶编号**）才暴露出来的。
 
-顺带一条这批题解共同暴露的习惯：**方法里的调试打印和就地改入参**（`p49_3sum` 排完序打一行、`p128` 打 `numSet`、Floyd 直接接管矩阵、三份图程序里只有两份是逐格拷贝的），本地看很直观，交上去要么多输出一行、要么把调用方的数据改坏。链表题还多一层：**复用节点还是新建节点**，决定了返回值之外的原链表还能不能用 —— `2` / `138` 全程新建，`21` / `23` / `24` / `25` / `148` 只改 `next`，返回之后原链表已经被拆开了。
+顺带一条这批题解共同暴露的习惯：**方法里的调试打印和就地改入参**（`p15_3sum` 排完序打一行、`p128` 打 `numSet`、Floyd 直接接管矩阵、三份图程序里只有两份是逐格拷贝的、**`p200` 把调用方的地图抹成 `'0'`**、**同花顺只在"同花"那条分支里排序**），本地看很直观，交上去要么多输出一行、要么把调用方的数据改坏。链表题还多一层：**复用节点还是新建节点**，决定了返回值之外的原链表还能不能用 —— `2` / `138` 全程新建，`21` / `23` / `24` / `25` / `148` 只改 `next`，返回之后原链表已经被拆开了。
 
 ## 这批链表 / 二叉树程序的三个共性
 
 **一、复用节点的题，返回值是唯一正确的入口。** 21 题合并 `[1,10,11]` 与 `[2,3]` 后，从原 list1 头出发走成 `1→2→3→10→11`；24/25/148 的节点复用率实测 4/4、10/10、4/4。而 2 题（竖式）和 138 题（深拷贝）全程 `new`，入参一个字节都不动 —— 同样是"链表题"，约定完全不同，用之前看清 `merge`/`new` 落在哪。
 
-**二、`main` 只演示 happy path，注释里的"预期"经常没被验证过。** 94 题第三行打印 10 个值、注释写的是 7 个；101 题的注释断言"完全二叉树肯定对称"，实测 `false`；142 题的案例 2/3 注释和 `pos` 参数对不上；226 题打印 `TreeNode@hash` 而不是结构；146 题的 `main` 干脆是空的（运行输出 0 字节）；`p543` 目前只有空 `main`，所以这一轮没有收录它。笔记里的边界表都是另写驱动跑出来的，不是从 `main` 抄的。
+**二、`main` 只演示 happy path，注释里的"预期"经常没被验证过。** 94 题第三行打印 10 个值、注释写的是 7 个；101 题的注释断言"完全二叉树肯定对称"，实测 `false`；142 题的案例 2/3 注释和 `pos` 参数对不上；226 题和 108 题打印的是 `TreeNode@hash` 而不是结构；114 题那串 `null` 是 `main` 里硬编码 `print("null ")` 打出来的，**并没有真去读左孩子**（想验证左指针清没清得自己遍历）；105 题的输出末尾带一个空格、而且没有换行。笔记里的边界表都是另写驱动跑出来的，不是从 `main` 抄的。
 
-**三、递归的代价看树高，不看节点数。** 四份二叉树/遍历程序实测：94 题 5,000 层安全、10,000 层冷启动爆栈（JIT 预热后同深度又能过）；101 题 20,000 层安全、50,000 层爆；104 题 20,000 层安全、50,000 层爆；226 题 10,000 层安全、20,000 层爆。反过来，满树 100 万节点高度只有 20，104 题 2.2 ms、226 题 3.6 ms、148 题 100 万节点递归深度也只有约 20。**判断会不会爆栈，先看形状。**
+**三、递归的代价看树高，不看节点数。** 这一轮把十二份树/网格程序逐档试探了一遍：94 题 5,000 层安全、10,000 层冷启动爆栈（JIT 预热后同深度又能过）；101 / 104 题 20,000 层安全、50,000 层爆；226 题 10,000 层安全、20,000 层爆；**543 / 124 / 230 / 236 / 437 都是斜链 50,000 爆**；105 题右斜链 10,000 就爆、左斜链 5,000 爆；200 题不是树，但**全 1 方阵边长 110（1.2 万格）就爆**，因为递归深度等于最长陆地路径。反过来，满树 100 万节点高度只有 20：104 题 2.2 ms、226 题 3.6 ms、543 题直径 38 / 2 ms、124 题 2 ms、98 题 2 ms、437 题 12 ms。**两个例外值得单独记**：102 / 199 用的是 BFS，102 题右斜链 200,000 层只要 3 ms、199 题 100,000 层正常，而同形状的 DFS 参考已经爆栈；98 题的非法斜链（全 0）在第二个节点就撞上 `val <= lower`、`&&` 左边为 false 使右支递归根本不执行，100 万节点也 0 ms 返回 false —— **测递归深度必须用能让递归走到底的输入**，拿非法输入测出来的"不会爆栈"是假的（换成严格递增的合法右斜链，30,000 就爆）。**判断会不会爆栈，先看形状。**
 
 ## 目录结构
 
@@ -240,6 +308,11 @@ src/com/ittxf/
 │   ├── dijkstra/                    DijkstraAlgorithm.java        + Dijkstra最短路径.md
 │   ├── floyd/                       FloydAlgorithm.java           + Floyd所有顶点最短路径.md
 │   └── horse/                       HorseChessboard.java          + 马踏棋盘.md
+├── others/                          四份不成套的练习
+│   ├── climbstairs/                 ClimbStairs.java                + 爬楼梯1到4阶与坏台阶.md
+│   ├── permute/                     Permute.java                    + 全排列.md
+│   ├── longestSubarraySumPositive/  LongestSubarraySumPositive.java + 和为正的最长子数组.md
+│   └── straightFlush/               StraightFlush.java              + 同花顺判定.md
 └── leetcode/
     ├── LeetCode415_AddStrings.java                                 + LeetCode415-字符串相加.md
     └── hot100/                                                     一题一包，每包里 .java + 同名 .md
@@ -248,7 +321,7 @@ src/com/ittxf/
         │                                 LeetCode3_...Characters.java + LeetCode3-无重复字符的最长子串.md
         ├── p11_containerwithmostwater/  LeetCode11_ContainerWithMostWater.java + LeetCode11-盛最多水的容器.md
         ├── p42_trappingtainwater/       LeetCode42_TrappingRainWater.java + LeetCode42-接雨水.md
-        ├── p49_3sum/                    LeetCode49_3Sum.java         + LeetCode15-三数之和.md
+        ├── p15_3sum/                    LeetCode15_3Sum.java         + LeetCode15-三数之和.md
         ├── p49_groupanagrams/           LeetCode49_GroupAnagrams.java + LeetCode49-字母异位词分组.md
         ├── p128_longestconsecutivesequence/
         │                                 LeetCode128_...Sequence.java + LeetCode128-最长连续序列.md
@@ -290,21 +363,42 @@ src/com/ittxf/
         ├── p104_maximumdepthofbinarytree/
         │                                 LeetCode104_...Tree.java          + LeetCode104-二叉树的最大深度.md
         ├── p226_invertbinarytree/       LeetCode226_...Tree.java          + LeetCode226-翻转二叉树.md
-        └── p543_diameterofbinarytree/   LeetCode543_...Tree.java                （空 main，未收录）
+        ├── p102_binarytreelevelordertraversal/
+        │                                 LeetCode102_...Traversal.java     + LeetCode102-二叉树的层序遍历.md
+        ├── p199_binarytreerightsideview/
+        │                                 LeetCode199_...SideView.java      + LeetCode199-二叉树的右视图.md
+        ├── p543_diameterofbinarytree/   LeetCode543_...Tree.java          + LeetCode543-二叉树的直径.md
+        ├── p124_binarytreemaximumpathsum/
+        │                                 LeetCode124_...PathSum.java       + LeetCode124-二叉树中的最大路径和.md
+        ├── p105_constructbinarytreefrompreorderandinordertraversal/
+        │                                 LeetCode105_...Traversal.java     + LeetCode105-从前序与中序遍历序列构造二叉树.md
+        ├── p114_flattenbinarytreetolinkedlist/
+        │                                 LeetCode117_...LinkedList.java    + LeetCode114-二叉树展开为链表.md
+        ├── p236_lowestcommonancestorofabinarytree/
+        │                                 LeetCode236_...BinaryTree.java    + LeetCode236-二叉树的最近公共祖先.md
+        ├── p437_pathsumIII/             LeetCode437_PathSumIII.java       + LeetCode437-路径总和III.md
+        ├── p98_validatebinarysearchtree/
+        │                                 LeetCode98_...SearchTree.java     + LeetCode98-验证二叉搜索树.md
+        ├── p108_convertsortedarraytobinarysearchtree/
+        │                                 LeetCode108_...SearchTree.java    + LeetCode108-将有序数组转换为二叉搜索树.md
+        ├── p230_kthsmallestelementinaBST/
+        │                                 LeetCode230_...InaBST.java        + LeetCode230-二叉搜索树中第K小的元素.md
+        └── p200_numberofislands/        LeetCode200_NumberOfIslands.java  + LeetCode200-岛屿数量.md
 ```
 
-`p543_diameterofbinarytree` 里目前只有类和空的 `main`，没有 `Solution`，所以这轮的 14 篇笔记和上面的知识点清单都不包含它 —— 等它写出来再补笔记。
+`hot100/` 下现在 51 个包都有实现、也都配了笔记（`p543` 这一轮补上了）；`others/` 那四份不成套，单独放一层。
 
 `p42_trappingtainwater` 这个目录名少了个 `r`（`trapping` 写成 `trappingt`），类名 `LeetCode42_TrappingRainWater` 是对的；
-`p49_3sum` 里装的是第 15 题（三数之和），和旁边真正的 49 题撞了号 —— 两处都只是命名，不影响编译和运行。
+`p114_flattenbinarytreetolinkedlist` 里的文件名和类名写的是 **117**（`LeetCode117_FlattenBinaryTreeToLinkedList`），内容其实是第 114 题 —— 117 是"填充每个节点的下一个右侧节点指针 II"，另一道题。
+`p15_3sum` 这一轮已经把目录、类名、笔记统一改成 15 题（原先误写成 49，和旁边真正的 `p49_groupanagrams` 撞号）。以上都只是命名，不影响编译和运行。
 
 `prim` / `kruskal` / `dijkstra` / `floyd` 四个包各自在同一文件里带了辅助类（`MiniSpanTree`+`Graph`、`EData`、`Graph`+`VisitedVertex`、`Graph`），所以是"一个文件一个知识点"。
-`dijkstra` 和 `floyd` 两个包里都有叫 `Graph` 的类；`hot100/` 下 39 个有实现的包里辅助类**全都叫 `Solution`**（LeetCode 网页模板就这么给的），**全靠包名区分 —— 把它们挪进同一个包会立刻 `错误: 重复`**（实测）。
+`dijkstra` 和 `floyd` 两个包里都有叫 `Graph` 的类；`hot100/` 下 51 个有实现的包里，除 `p146`（主体类叫 `LRUCache`，里面再套一个 `Node`）之外辅助类**全都叫 `Solution`**（LeetCode 网页模板就这么给的），**全靠包名区分 —— 把它们挪进同一个包会立刻 `错误: 重复`**（实测）。
 `out/`（IDEA 编译输出）、`.idea/`、`*.iml` 不入库。
 
 ## 怎么跑
 
-五十二个 `.java` 全部带 `main`（`p543` 的 `main` 是空的），跑起来不需要任何输入，直接打印结果。IDEA 里点绿色三角即可。命令行（本机 JDK 21.0.12.1，五十二个文件一次编译全部通过）：
+六十七个 `.java` 全部带 `main`，跑起来不需要任何输入，直接打印结果。IDEA 里点绿色三角即可。命令行（本机 JDK 21.0.12.1，六十七个文件一次编译全部通过，产出 160 个 `.class`）：
 
 ```powershell
 # 单个程序
@@ -340,7 +434,7 @@ com.ittxf.leetcode.hot100.p1_twosum…               [0, 1]
 com.ittxf.leetcode.hot100.p3_…                     4
 com.ittxf.leetcode.hot100.p11_…                    49
 com.ittxf.leetcode.hot100.p42_…                    6
-com.ittxf.leetcode.hot100.p49_3sum…                [-4, -1, -1, 0, 1, 2] 然后 [[-1, -1, 2], [-1, 0, 1]]
+com.ittxf.leetcode.hot100.p15_3sum…                [-4, -1, -1, 0, 1, 2] 然后 [[-1, -1, 2], [-1, 0, 1]]
 com.ittxf.leetcode.hot100.p49_groupanagrams…       [[eat, tea, ate], [bat], [tan, nat]]
 com.ittxf.leetcode.hot100.p128_…                   [0, 1, 2, 3, 4, 5, 6, 7, 8] 然后 9
 com.ittxf.leetcode.hot100.p239_…                   [3, 3, 5, 5, 6, 7]
@@ -369,12 +463,31 @@ com.ittxf.leetcode.hot100.p24_…                    2 -> 1 -> 4 -> 3 -> 5
 com.ittxf.leetcode.hot100.p25_…                    2 -> 1 -> 4 -> 3 -> 5（文案写的“交换后的链表”）
 com.ittxf.leetcode.hot100.p138_…                   原链 / 新链各一行，随机指针值 3、1、2
 com.ittxf.leetcode.hot100.p142_…                   2 / 1 / null
-com.ittxf.leetcode.hot100.p146_…                   （无输出：main 是空的）
+com.ittxf.leetcode.hot100.p146_…                   找1:1 / 找2:-1 / 找1:-1 / 找3:3 / 找4:4（五行）
 com.ittxf.leetcode.hot100.p148_…                   1 -> 2 -> 3 -> 4
 com.ittxf.leetcode.hot100.p94_…                    空树 [] / [1, 3, 2] / [1, 3, 2, 4, 2, 5, 1, 6, 3, 7]（第三行被前一次污染）
 com.ittxf.leetcode.hot100.p101_…                   true / false / false
 com.ittxf.leetcode.hot100.p104_…                   0 / 3 / 3
 com.ittxf.leetcode.hot100.p226_…                   null / TreeNode@hash / TreeNode@hash
+com.ittxf.leetcode.hot100.p102_…                   二叉树的层序遍历: [[3], [9, 20], [15, 7]]
+com.ittxf.leetcode.hot100.p199_…                   右视图: [1, 3, 4, 5]
+com.ittxf.leetcode.hot100.p543_…                   二叉树的直径: 3
+com.ittxf.leetcode.hot100.p124_…                   最大路径和：42
+com.ittxf.leetcode.hot100.p105_…                   3 9 20 15 7 （末尾带一个空格，且没有换行）
+com.ittxf.leetcode.hot100.p114_…                   Flattened tree: 换行后 1 null 2 null 3 null 4 null 5 null 6 null
+                                                   ← 那串 null 是 main 里硬编码 print 的，不是真读了左孩子
+com.ittxf.leetcode.hot100.p236_…                   3
+com.ittxf.leetcode.hot100.p437_…                   算路径和为8的路径个数: 3
+com.ittxf.leetcode.hot100.p98_…                    验证二叉搜索树: false
+com.ittxf.leetcode.hot100.p108_…                   排序数组转换为二叉搜索树: …TreeNode@5caf905d（打印的是对象，不是结构）
+com.ittxf.leetcode.hot100.p230_…                   kthSmallest: 1
+com.ittxf.leetcode.hot100.p200_…                   1
+com.ittxf.others.climbstairs.ClimbStairs           81
+com.ittxf.others.permute.Permute                 [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+com.ittxf.others.longestSubarraySumPositive…       3
+com.ittxf.others.straightFlush.StraightFlush       案例一（10-J-Q-K-A）结果: true
+                                                   案例二（A-2-3-4-5）结果: true
+                                                   案例三（Q-K-A-2-3）结果: false
 ```
 
 几处要注意的：
@@ -387,7 +500,8 @@ com.ittxf.leetcode.hot100.p226_…                   null / TreeNode@hash / Tree
 - 四个图程序的矩阵**不是同一张**，无穷大常量也各不相同（10000 / `Integer.MAX_VALUE` / 65535），对照前面那张表再看输出。
 - 题解的辅助类都叫 `Solution`、图的辅助类都叫 `Graph`，靠"一题一包 / 一章一包"避开重名，**别把它们并到同一个包里**。
 - `p94` 第三行与注释不符是**代码问题，不是打印问题**：`List` 挂在 `Solution` 实例上，三次调用共用同一个对象并返回它，第三次自然带上前两次的 `[1,3,2]`；每次都 `new Solution()` 就恢复成 `[4,2,5,1,6,3,7]`。
-- `p146` 的 `main` 是空的，直接运行没有输出；LRU 语义是用独立驱动验的（含 `getOrDefault` 是否刷新顺序）。
-- `p25` 的 `k <= 0` 不报错也不死循环，而是返回 dummy 自环、原链表 5 个节点全部丢失；`p543` 目前只有空 `main`，没有实现，这轮未收录。
+- `p146` 这一轮从 `LinkedHashMap` 三行版重写成 **HashMap + 哨兵双向链表**，`main` 跑的是官方序列（`1 / -1 / -1 / 3 / 4`）；淘汰要拿 `tailNode.key` 去 `map.remove`，所以 `Node` 必须存 key。`capacity = 0` 时 `put` 会 NPE（旧版给 −1），见那篇笔记。
+- `p25` 的 `k <= 0` 不报错也不死循环，而是返回 dummy 自环、原链表 5 个节点全部丢失。
 - `p23` 结果一定对，但"累加结果再并下一条"在 2000 列 × 500 个节点上要 **22.6 秒**（同一批节点两两分治 199 ms），规模大时请换成分治或优先队列。
-- 五十二个 `main` 都只演示一组数据。笔记里的边界结论 —— 不存在的值、单点窗口、空串、0 个盘、平局、孤立的顶点、`≥ 65535` 的路径长度、重量 0 的物品、非正方棋盘、**恰好带重复元素的数组**、同一个 JVM 跑第二遍、**同一个 `Solution` 实例第二次调用**、`k = 0`、`n = 0` —— 都得自己换入参才能复现，各篇笔记里的实测表就是照着这个目的写的。
+- `p200` 的 `main` 只给一张 1 岛的小地图，看着很稳；换成全 1 方阵，**边长 110 就 `StackOverflowError`**（递归深度 = 最长陆地路径），而题面上限是 300×300 —— 想跑大地图请把 `dfs` 换成 BFS/并查集，见那篇笔记第五节。
+- 六十七个 `main` 都只演示一组数据。笔记里的边界结论 —— 不存在的值、单点窗口、空串、0 个盘、平局、孤立的顶点、`≥ 65535` 的路径长度、重量 0 的物品、非正方棋盘、**恰好带重复元素的数组**、同一个 JVM 跑第二遍、**同一个 `Solution` 实例第二次调用**、`k = 0`、`n = 0`、**大树之后紧接着调一棵小树**、**不在树里的幽灵节点**、`capacity = 0`、**超出 n 的坏台阶编号** —— 都得自己换入参才能复现，各篇笔记里的实测表就是照着这个目的写的。

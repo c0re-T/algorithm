@@ -61,7 +61,7 @@ while (nums[i] > 0 && nums[i] <= n && nums[i] != nums[nums[i] - 1]) {
 
 ## 五、它会就地重排入参
 
-和 `p49_3sum`、`p56`、Floyd 那几处一样，这份实现**直接改调用方的数组**（cyclic sort 的本质）：
+和 `p15_3sum`、`p56`、Floyd 那几处一样，这份实现**直接改调用方的数组**（cyclic sort 的本质）：
 
 ```
    调用前 [3, 4, -1, 1]
